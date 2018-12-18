@@ -8,11 +8,11 @@ public class Ressource
 {
     [SerializeField]
     private int Value;
-    public RessourceType RessourceType;
+    public ResourceType RessourceType;
     public Text Text;
    
 
-    public Ressource(RessourceType ressourceType)
+    public Ressource(ResourceType ressourceType)
     {
         RessourceType = ressourceType;
     }

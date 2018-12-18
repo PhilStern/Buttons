@@ -33,6 +33,8 @@ public class Timer : MonoBehaviour
 
     public UnityEvent OnTimerStart;
     public UnityEvent OnTimerEnd;
+
+    private bool timerRunning = false;
     
     
 
@@ -64,6 +66,7 @@ public class Timer : MonoBehaviour
 
     private IEnumerator EventInvoker(float time)
     {
+        timerRunning = true;
         float t = Time.time + time;
         float tn = (t - Time.time) /time;
         ResetGradient();
@@ -81,7 +84,13 @@ public class Timer : MonoBehaviour
         HideGradient();
         if (OnTimerEnd != null)
             OnTimerEnd.Invoke();
+        timerRunning = false;
         
+    }
+
+    public bool TimerIsRunning()
+    {
+        return timerRunning;
     }
 
     private void ResetGradient()

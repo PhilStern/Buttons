@@ -35,6 +35,10 @@ public class SpriteButton : MonoBehaviour {
     private Color InactiveColor;
     [SerializeField]
     private ButtonState State;
+    [SerializeField]
+    private Timer timer;
+
+    private ConditionObserver conditionObserver;
 
     private bool Active;
 
@@ -46,6 +50,8 @@ public class SpriteButton : MonoBehaviour {
     private void Start()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+        conditionObserver = GetComponent<ConditionObserver>();
+        timer = GetComponent<Timer>();
         SetSprite(Base);
         BoxCollider = gameObject.AddComponent<BoxCollider2D>();
         RigidBody = gameObject.AddComponent<Rigidbody2D>();
@@ -107,15 +113,15 @@ public class SpriteButton : MonoBehaviour {
 
     private void SetSprite(Sprite sprite)
     {
-        if (sprite != null)
+        if (spriteRenderer != null && sprite != null)
         {
             spriteRenderer.sprite = sprite;
         }
-        else if(Base != null)
+        else if(spriteRenderer != null && Base != null)
         {
             spriteRenderer.sprite = Base;
         }
-        else
+        else if(spriteRenderer != null)
         {
             Debug.Log(gameObject.name + "'s base sprite is missing.");
         }
@@ -123,19 +129,61 @@ public class SpriteButton : MonoBehaviour {
 
     private void SetColor(Color color)
     {
-        if (!color.Equals(Color.clear))
+        if (spriteRenderer != null && !color.Equals(Color.clear))
         {
             spriteRenderer.color = color;
         }
-        else
+        else if (spriteRenderer != null)
         {
             Debug.Log(gameObject.name + " has a missing color.");
         }
     }
 
+    public void UpdateConditions()
+    {
+        if (conditionObserver != null)
+        {
+            if (conditionObserver.ConditionsFullfilled() && !timer.TimerIsRunning())
+            {
+                SetActive(true);
+            }
+            else
+            {
+                SetActive(false);
+            }
+        }
+        else if (timer != null && !timer.TimerIsRunning())
+        {
+            SetActive(true);
+        }
+        else
+        {
+            SetActive(false);
+        }
+    }
+
     public void SetActive(bool active)
     {
-        Active = active;
+        if (conditionObserver != null)
+        {
+            if (active == true && conditionObserver.ConditionsFullfilled())
+            {
+                Active = active;
+            }
+            else
+            {
+                if (Manager.Instance.Debug)
+                {
+                    Debug.Log("Conditions not fullfilled setting active command to false");
+                }
+                Active = false;
+            }
+        }
+        else
+        {
+            Active = active;
+        }
+
         if (!Active)
         {
             SetState(ButtonState.Inactive);

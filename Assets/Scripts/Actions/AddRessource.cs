@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class AddRessource : MonoBehaviour
 {
-    public RessourceType Ressource;
+    public ResourceType Ressource;
 
     public void AddRessourceAction(int value)
     {
